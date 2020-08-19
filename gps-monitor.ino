@@ -1,6 +1,8 @@
 #include <LiquidCrystal.h>
+#include <TinyGPS++.h>
 
 LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+TinyGPSPlus tinyGPS;
 
 void setup() {
   lcd.begin(16, 2);
@@ -11,15 +13,27 @@ void setup() {
 }
 
 void loop() {
-  int s;
+  displayLatLon();
+  loadData(1000);
+}
+
+void displayLatLon() {
+  lcd.setCursor(5,0);
+  lcd.print(tinyGPS.location.lat(), 6);
+
+  lcd.setCursor(4,1);
+  lcd.print(tinyGPS.location.lng(), 6);
+}
+
+
+void loadData(unsigned long ms)
+{
+  unsigned long start = millis();
   do
   {
-    if (Serial1.available() > 0) {
-      s = Serial1.read();
-      lcd.setCursor(10,1);
-      lcd.print(s);
-    }
-  } while (true);
+    while (Serial1.available())
+      tinyGPS.encode(Serial1.read());
+  } while (millis() - start < ms);
 }
 
 void DisplayTitle()
@@ -40,10 +54,10 @@ void DisplayLabels()
   lcd.print("LON:");
 }
 
-void ClearLCDLine(int line)
+void ClearLine(int line)
 {
-  lcd.setCursor(0, line);
-  lcd.print("                    ");
+  lcd.setCursor(4, line);
+  lcd.print("            ");
   return;
 }
 
