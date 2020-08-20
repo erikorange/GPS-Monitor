@@ -9,19 +9,36 @@ void setup() {
   Serial1.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
   DisplayTitle();
-  DisplayLabels();
 }
 
 void loop() {
-  displayLatLon();
+  CheckForSatLock();
   loadData(1000);
+  displayLatLon();
+  
+}
+
+void CheckForSatLock()
+{
+  if (tinyGPS.location.lat() == 0.0)
+  {
+    DisplaySatLock();
+    while (tinyGPS.location.lat() == 0.0) {
+      loadData(1000);
+    }
+    lcd.clear();
+  }
 }
 
 void displayLatLon() {
-  lcd.setCursor(5,0);
+  lcd.setCursor(0,0);
+  lcd.print("LAT:");
+  lcd.setCursor(6,0);
   lcd.print(tinyGPS.location.lat(), 6);
-
-  lcd.setCursor(4,1);
+  
+  lcd.setCursor(0,1);
+  lcd.print("LON:");
+  lcd.setCursor(5,1);
   lcd.print(tinyGPS.location.lng(), 6);
 }
 
@@ -38,27 +55,21 @@ void loadData(unsigned long ms)
 
 void DisplayTitle()
 {
-  lcd.setCursor(6, 0);
-  lcd.print("G P S");
+  lcd.setCursor(2, 0);
+  lcd.print("GPS Monitor");
   lcd.setCursor(0, 1);
   lcd.print("(c) Erik Orange");
-  delay(3000);
+  delay(1000);
   lcd.clear();
 }
 
-void DisplayLabels()
+void DisplaySatLock()
 {
-  lcd.setCursor(0,0);
-  lcd.print("LAT:");
-  lcd.setCursor(0,1);
-  lcd.print("LON:");
-}
-
-void ClearLine(int line)
-{
-  lcd.setCursor(4, line);
-  lcd.print("            ");
-  return;
+  lcd.clear();
+  lcd.setCursor(3,0);
+  lcd.print("Acquiring");
+  lcd.setCursor(1,1);
+  lcd.print("Satellite Lock");
 }
 
 void Blink(int time) {
