@@ -9,10 +9,22 @@ const int BUTTON_OPEN = HIGH;
 const int BUTTON_CLOSED = LOW;
 int mode = 1;
 
+byte degsym[8] = {
+  B01000,
+  B10100,
+  B01000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+  B00000,
+};
+
 void setup() {
   pinMode(BUTTON_MODE, INPUT);
   digitalWrite(BUTTON_MODE, HIGH);     // turn on the built in pull-up resistor
   lcd.begin(16, 2);
+  lcd.createChar(0, degsym);
   Serial.begin(9600);
   Serial1.begin(9600);
   pinMode(LED_BUILTIN, OUTPUT);
@@ -25,9 +37,12 @@ void loop() {
   
   switch (mode) {
   case 1:
-    displayLatLon();
+    displayLatLonDecimal();
     break;
   case 2:
+    displayLatLonDegrees();
+    break;
+  case 3:
     displayAltitude();
     break;
   default:
@@ -77,7 +92,7 @@ void checkButton()
   if (digitalRead(BUTTON_MODE) == BUTTON_CLOSED)
   {
     mode++;
-    if (mode == 3) {
+    if (mode == 4) {
       mode = 1;
     }
     lcd.clear();
@@ -97,7 +112,7 @@ void CheckForSatLock()
   }
 }
 
-void displayLatLon() {
+void displayLatLonDecimal() {
   lcd.setCursor(0,0);
   lcd.print("LAT:");
   lcd.setCursor(6,0);
@@ -107,6 +122,63 @@ void displayLatLon() {
   lcd.print("LON:");
   lcd.setCursor(5,1);
   lcd.print(tinyGPS.location.lng(), 6);
+}
+
+void calcDegMinSec(double posDecimal, double* posDeg, double* posMin, double* posSec) {
+  double intPart, fractPart;
+
+  fractPart = modf(posDecimal, &intPart);
+  *posDeg = intPart;
+  fractPart = modf(fractPart * 60.0, &intPart);
+  *posMin = intPart;
+  fractPart = modf(fractPart * 600.0, &intPart);  // want 3 digits for seconds
+  *posSec = intPart;
+}
+
+void displayLatLonDegrees() {
+  double latDeg, latMin, latSec;
+  double lonDeg, lonMin, lonSec;
+  char buf[12];
+ 
+  calcDegMinSec(tinyGPS.location.lat(), &latDeg, &latMin, &latSec);
+  calcDegMinSec(tinyGPS.location.lng(), &lonDeg, &lonMin, &lonSec);
+  Serial.println(lonDeg);
+  
+  dtostrf(latDeg, 2, 0, buf);
+  lcd.setCursor(0,0);
+  lcd.print("N");
+  lcd.setCursor(3,0);
+  lcd.print(buf);
+  lcd.setCursor(5,0);
+  lcd.write(int(0));
+  dtostrf(latMin, 2, 0, buf);
+  lcd.setCursor(6,0);
+  lcd.print(buf);
+  lcd.setCursor(8,0);
+  lcd.print(".");
+  dtostrf(latSec, 3, 0, buf);
+  lcd.setCursor(9,0);
+  lcd.print(buf);
+  lcd.setCursor(12,0);
+  lcd.print('"');
+
+  dtostrf(abs(lonDeg), 2, 0, buf);
+  lcd.setCursor(0,1);
+  lcd.print("W -");
+  lcd.setCursor(3,1);
+  lcd.print(buf);
+  lcd.setCursor(5,1);
+  lcd.write(int(0));
+  dtostrf(abs(lonMin), 2, 0, buf);
+  lcd.setCursor(6,1);
+  lcd.print(buf);
+  lcd.setCursor(8,1);
+  lcd.print(".");
+  dtostrf(abs(lonSec), 3, 0, buf);
+  lcd.setCursor(9,1);
+  lcd.print(buf);
+  lcd.setCursor(12,1);
+  lcd.print('"');
 }
 
 void displayAltitude() {
