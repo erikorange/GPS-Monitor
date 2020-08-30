@@ -51,42 +51,7 @@ void loop() {
   checkButton();
 }
 
-void printvals()
-{
-  Serial.println("---BEGIN---");
-  Serial.println(tinyGPS.location.lat(), 6); // Latitude in degrees (double)
-Serial.println(tinyGPS.location.lng(), 6); // Longitude in degrees (double)
-Serial.print(tinyGPS.location.rawLat().negative ? "-" : "+");
-Serial.println(tinyGPS.location.rawLat().deg); // Raw latitude in whole degrees
-Serial.println(tinyGPS.location.rawLat().billionths);// ... and billionths (u16/u32)
-Serial.print(tinyGPS.location.rawLng().negative ? "-" : "+");
-Serial.println(tinyGPS.location.rawLng().deg); // Raw longitude in whole degrees
-Serial.println(tinyGPS.location.rawLng().billionths);// ... and billionths (u16/u32)
-Serial.println(tinyGPS.date.value()); // Raw date in DDMMYY format (u32)
-Serial.println(tinyGPS.date.year()); // Year (2000+) (u16)
-Serial.println(tinyGPS.date.month()); // Month (1-12) (u8)
-Serial.println(tinyGPS.date.day()); // Day (1-31) (u8)
-Serial.println(tinyGPS.time.value()); // Raw time in HHMMSSCC format (u32)
-Serial.println(tinyGPS.time.hour()); // Hour (0-23) (u8)
-Serial.println(tinyGPS.time.minute()); // Minute (0-59) (u8)
-Serial.println(tinyGPS.time.second()); // Second (0-59) (u8)
-Serial.println(tinyGPS.time.centisecond()); // 100ths of a second (0-99) (u8)
-Serial.println(tinyGPS.speed.value()); // Raw speed in 100ths of a knot (i32)
-Serial.println(tinyGPS.speed.knots()); // Speed in knots (double)
-Serial.println(tinyGPS.speed.mph()); // Speed in miles per hour (double)
-Serial.println(tinyGPS.speed.mps()); // Speed in meters per second (double)
-Serial.println(tinyGPS.speed.kmph()); // Speed in kilometers per hour (double)
-Serial.println(tinyGPS.course.value()); // Raw course in 100ths of a degree (i32)
-Serial.println(tinyGPS.course.deg()); // Course in degrees (double)
-Serial.println(tinyGPS.altitude.value()); // Raw altitude in centimeters (i32)
-Serial.println(tinyGPS.altitude.meters()); // Altitude in meters (double)
-Serial.println(tinyGPS.altitude.miles()); // Altitude in miles (double)
-Serial.println(tinyGPS.altitude.kilometers()); // Altitude in kilometers (double)
-Serial.println(tinyGPS.altitude.feet()); // Altitude in feet (double)
-Serial.println(tinyGPS.satellites.value()); // Number of satellites in use (u32)
-Serial.println(tinyGPS.hdop.value()); // Horizontal Dim. of Precision (100ths-i32)
-Serial.println("---END---");
-}
+
 void checkButton()
 {
   if (digitalRead(BUTTON_MODE) == BUTTON_CLOSED)
@@ -160,7 +125,7 @@ void displayLatLonDegrees() {
   lcd.setCursor(9,0);
   lcd.print(buf);
   lcd.setCursor(12,0);
-  lcd.print('"');
+  lcd.print("'");
 
   dtostrf(abs(lonDeg), 2, 0, buf);
   lcd.setCursor(0,1);
@@ -178,7 +143,7 @@ void displayLatLonDegrees() {
   lcd.setCursor(9,1);
   lcd.print(buf);
   lcd.setCursor(12,1);
-  lcd.print('"');
+  lcd.print("'");
 }
 
 void displayAltitude() {
@@ -226,6 +191,43 @@ void Blink(int time) {
   digitalWrite(LED_BUILTIN, HIGH);
   delay(time);
   digitalWrite(LED_BUILTIN, LOW);
+}
+
+void printvals()
+{
+  Serial.println("---BEGIN---");
+  Serial.println(tinyGPS.location.lat(), 6); // Latitude in degrees (double)
+Serial.println(tinyGPS.location.lng(), 6); // Longitude in degrees (double)
+Serial.print(tinyGPS.location.rawLat().negative ? "-" : "+");
+Serial.println(tinyGPS.location.rawLat().deg); // Raw latitude in whole degrees
+Serial.println(tinyGPS.location.rawLat().billionths);// ... and billionths (u16/u32)
+Serial.print(tinyGPS.location.rawLng().negative ? "-" : "+");
+Serial.println(tinyGPS.location.rawLng().deg); // Raw longitude in whole degrees
+Serial.println(tinyGPS.location.rawLng().billionths);// ... and billionths (u16/u32)
+Serial.println(tinyGPS.date.value()); // Raw date in DDMMYY format (u32)
+Serial.println(tinyGPS.date.year()); // Year (2000+) (u16)
+Serial.println(tinyGPS.date.month()); // Month (1-12) (u8)
+Serial.println(tinyGPS.date.day()); // Day (1-31) (u8)
+Serial.println(tinyGPS.time.value()); // Raw time in HHMMSSCC format (u32)
+Serial.println(tinyGPS.time.hour()); // Hour (0-23) (u8)
+Serial.println(tinyGPS.time.minute()); // Minute (0-59) (u8)
+Serial.println(tinyGPS.time.second()); // Second (0-59) (u8)
+Serial.println(tinyGPS.time.centisecond()); // 100ths of a second (0-99) (u8)
+Serial.println(tinyGPS.speed.value()); // Raw speed in 100ths of a knot (i32)
+Serial.println(tinyGPS.speed.knots()); // Speed in knots (double)
+Serial.println(tinyGPS.speed.mph()); // Speed in miles per hour (double)
+Serial.println(tinyGPS.speed.mps()); // Speed in meters per second (double)
+Serial.println(tinyGPS.speed.kmph()); // Speed in kilometers per hour (double)
+Serial.println(tinyGPS.course.value()); // Raw course in 100ths of a degree (i32)
+Serial.println(tinyGPS.course.deg()); // Course in degrees (double)
+Serial.println(tinyGPS.altitude.value()); // Raw altitude in centimeters (i32)
+Serial.println(tinyGPS.altitude.meters()); // Altitude in meters (double)
+Serial.println(tinyGPS.altitude.miles()); // Altitude in miles (double)
+Serial.println(tinyGPS.altitude.kilometers()); // Altitude in kilometers (double)
+Serial.println(tinyGPS.altitude.feet()); // Altitude in feet (double)
+Serial.println(tinyGPS.satellites.value()); // Number of satellites in use (u32)
+Serial.println(tinyGPS.hdop.value()); // Horizontal Dim. of Precision (100ths-i32)
+Serial.println("---END---");
 }
 
  
